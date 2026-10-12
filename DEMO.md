@@ -1,7 +1,5 @@
 # Local order lifecycle demo
 
-[中文说明](DEMO.zh-CN.md)
-
 This demo runs the complete happy path: fund an order for 100, agree to amend the total to 180, collect the additional 80 and activate the new revision, submit a deliverable, then obtain buyer acceptance and pay the provider 180. Two additional examples demonstrate cancellation before activation and an expiry refund when no work has been submitted.
 
 It is a local Solidity/EVM experiment using synthetic data and disposable TEST tokens. It does not call an LLM, connect to the Finch backend, use real funds or deploy to a public network. The settlement operations are an application fixture around the amendment profile, not additions to ERC-8001 Core or a proposed general verification standard.

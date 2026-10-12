@@ -85,6 +85,8 @@ The first implementation follows the canonical ERC-8001 domain `ERC-8001` / `1` 
 
 ## Contributing
 
+Use English for public-facing documentation, examples and discussion updates.
+
 Issues and small PRs with a concrete workflow, counterexample or independently computed vector are welcome. Include the base order, signed payload, expected outcome and reproducible steps. The discussion's scope poll is advisory; it does not assign an ERC number or approve a standard.
 
 MIT licensed. Dependencies retain their own licenses. The `tmp` override pins a patched compiler-tooling dependency; versions and integrity hashes are in `package-lock.json`.
