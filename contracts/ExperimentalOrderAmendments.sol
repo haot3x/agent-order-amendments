@@ -8,13 +8,14 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-/// @notice Local-EVM experiment only. No withdrawal, refund or dispute lifecycle.
+/// @notice Local-EVM experiment with a minimal buyer-reviewed settlement fixture.
 /// @dev Use only disposable test tokens. Not an audited escrow or a full conformance claim.
 contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     enum Status { None, Proposed, Ready, Executed, Cancelled, Expired }
-    enum OrderStatus { None, Offered, Active, Submitted }
+    // Append only: existing profile status values remain unchanged.
+    enum OrderStatus { None, Offered, Active, Submitted, Accepted, Cancelled, Refunded }
     struct Terms { bytes32 scopeHash; bytes32 acceptanceHash; uint256 totalPrice; uint64 deadline; }
     struct Order {
         address buyer; address provider; OrderStatus status;
@@ -63,6 +64,9 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
     event OrderAmendmentApplied(bytes32 indexed intentHash, bytes32 indexed orderId, uint64 revision, bytes32 previousTermsHash, bytes32 newTermsHash, uint256 supplement);
     event AmendmentsInvalidated(bytes32 indexed orderId, address indexed participant, uint256 amendmentNonce);
     event OrderSubmitted(bytes32 indexed orderId, uint64 revision, bytes32 termsHash, bytes32 resultHash);
+    event OrderAccepted(bytes32 indexed orderId, address indexed buyer, uint64 revision, bytes32 termsHash, bytes32 resultHash);
+    event OrderPaid(bytes32 indexed orderId, address indexed provider, uint256 amount);
+    event OrderRefunded(bytes32 indexed orderId, address indexed buyer, uint256 amount, OrderStatus finalStatus);
 
     constructor(IERC20 testAsset) EIP712("ERC-8001", "1") {
         require(address(testAsset).code.length > 0, "ASSET");
@@ -107,6 +111,18 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         require(asset.balanceOf(address(this)) == toBefore + amount, "RECEIVED_AMOUNT");
         require(asset.balanceOf(buyer) == fromBefore - amount, "DEBIT_AMOUNT");
     }
+    function _release(Order storage o, address recipient) private returns (uint256 amount) {
+        amount = o.escrow;
+        require(amount > 0, "EMPTY_ESCROW");
+        // Public callers set the terminal status before this interaction. A token
+        // failure reverts both that status and these effects, allowing a retry.
+        o.escrow = 0;
+        uint256 fromBefore = asset.balanceOf(address(this));
+        uint256 toBefore = asset.balanceOf(recipient);
+        asset.safeTransfer(recipient, amount);
+        require(asset.balanceOf(address(this)) == fromBefore - amount, "DEBIT_AMOUNT");
+        require(asset.balanceOf(recipient) == toBefore + amount, "RECEIVED_AMOUNT");
+    }
 
     /// @dev Minimal initial order fixture: buyer funds, provider explicitly activates.
     function offerOrder(bytes32 id, address provider, Terms calldata terms) external nonReentrant {
@@ -139,6 +155,38 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         require(revision == o.revision && termsHash == o.termsHash && resultHash != 0, "SUBMISSION_BINDING");
         o.status = OrderStatus.Submitted; o.resultHash = resultHash;
         emit OrderSubmitted(id, revision, termsHash, resultHash);
+    }
+    /// @dev Application fixture, not part of the amendment wire format. The buyer
+    /// reviews the actual deliverable off-chain; a hash does not prove quality.
+    function acceptDelivery(bytes32 id, uint64 revision, bytes32 termsHash, bytes32 resultHash) external nonReentrant {
+        Order storage o = orders[id];
+        require(msg.sender == o.buyer, "BUYER");
+        require(o.status == OrderStatus.Submitted, "NOT_SUBMITTED");
+        require(revision == o.revision && termsHash == o.termsHash && resultHash == o.resultHash, "ACCEPTANCE_BINDING");
+        o.status = OrderStatus.Accepted;
+        emit OrderAccepted(id, msg.sender, revision, termsHash, resultHash);
+        uint256 amount = _release(o, o.provider);
+        emit OrderPaid(id, o.provider, amount);
+    }
+    /// @dev A provider has not committed to an Offered order yet. Once activated,
+    /// there is no unilateral early cancellation in this minimal fixture.
+    function cancelOfferedOrder(bytes32 id) external nonReentrant {
+        Order storage o = orders[id];
+        require(msg.sender == o.buyer, "BUYER");
+        require(o.status == OrderStatus.Offered, "NOT_OFFERED");
+        o.status = OrderStatus.Cancelled;
+        uint256 amount = _release(o, o.buyer);
+        emit OrderRefunded(id, o.buyer, amount, OrderStatus.Cancelled);
+    }
+    /// @dev Anyone can trigger a refund, but only to the recorded buyer. Work
+    /// submitted on time must be reviewed; expiry cannot override that delivery.
+    function refundExpiredOrder(bytes32 id) external nonReentrant {
+        Order storage o = orders[id];
+        require(o.status == OrderStatus.Offered || o.status == OrderStatus.Active, "NOT_REFUNDABLE");
+        require(block.timestamp >= o.terms.deadline, "NOT_EXPIRED");
+        o.status = OrderStatus.Refunded;
+        uint256 amount = _release(o, o.buyer);
+        emit OrderRefunded(id, o.buyer, amount, OrderStatus.Refunded);
     }
     function _data(CoordinationPayload calldata p) private view returns (AmendmentData memory d) {
         require(p.version == PAYLOAD_VERSION && p.coordinationType == COORDINATION_TYPE, "PROFILE");

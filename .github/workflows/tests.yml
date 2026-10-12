@@ -16,3 +16,4 @@ jobs:
       - run: npm test
       - run: npm run vectors
       - run: git diff --exit-code -- vectors/
+      - run: npm run demo

@@ -1,0 +1,12 @@
+[
+  { "id": "demo-01", "name": "Demo Atlas", "category": "payments", "source": "fixture://projects/demo-01" },
+  { "id": "demo-02", "name": "Demo Birch", "category": "identity", "source": "fixture://projects/demo-02" },
+  { "id": "demo-03", "name": "Demo Cedar", "category": "coordination", "source": "fixture://projects/demo-03" },
+  { "id": "demo-04", "name": "Demo Delta", "category": "storage", "source": "fixture://projects/demo-04" },
+  { "id": "demo-05", "name": "Demo Elm", "category": "verification", "source": "fixture://projects/demo-05" },
+  { "id": "demo-06", "name": "Demo Fjord", "category": "payments", "source": "fixture://projects/demo-06" },
+  { "id": "demo-07", "name": "Demo Grove", "category": "identity", "source": "fixture://projects/demo-07" },
+  { "id": "demo-08", "name": "Demo Harbor", "category": "coordination", "source": "fixture://projects/demo-08" },
+  { "id": "demo-09", "name": "Demo Iris", "category": "storage", "source": "fixture://projects/demo-09" },
+  { "id": "demo-10", "name": "Demo Juniper", "category": "verification", "source": "fixture://projects/demo-10" }
+]

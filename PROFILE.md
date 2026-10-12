@@ -4,11 +4,11 @@ Status: implementation experiment over ERC-8001, not an assigned ERC or an adopt
 
 ## Scope
 
-One buyer, one provider, one immutable payment asset, one chain, one combined coordinator/order contract. Original orders are funded by the buyer and explicitly activated by the provider. Those setup operations are a minimal test fixture, not a general commerce standard.
+One buyer, one provider, one immutable payment asset, one chain, one combined coordinator/order contract. Original orders are funded by the buyer and explicitly activated by the provider. Setup and settlement operations are an application test fixture, not a general commerce standard or additions to ERC-8001 Core.
 
 Allowed amendments: unchanged or increased total price, unchanged or extended deadline, replacement scope/acceptance commitments, and no submitted work. A successful amendment must change the terms hash. Scope and acceptance hashes commit to exact document bytes; they do not guarantee document availability or work quality.
 
-The Solidity example stops at submission. It supplies no final-payment, withdrawal, cancellation-of-work, refund, milestone or dispute mechanism. Funds in the example cannot be withdrawn; only local disposable test assets are suitable.
+The Solidity example adds a minimal buyer-reviewed payout, pre-activation cancellation and undelivered-order expiry refund. These operations do not alter the signed amendment encoding. They supply no dispute resolution, review timeout, cooperative active-order cancellation or milestones. Only local disposable test assets are suitable.
 
 ## Signed representation
 
@@ -126,11 +126,29 @@ The same rollback boundary covers a token that moves funds and then returns fals
 
 ## Submission and signatures
 
-Only the provider may submit, before the current order deadline, with the exact current revision, terms hash and nonzero result hash. Submission changes order status to Submitted and disables all later amendments. Final acceptance and payment are not implemented in the Solidity experiment.
+Only the provider may submit, before the current order deadline, with the exact current revision, terms hash and nonzero result hash. Submission changes order status to Submitted and disables all later amendments.
 
 EOA signatures accept low-s 65-byte ECDSA and compact 64-byte EIP-2098 encodings. Contract signers use ERC-1271 via STATICCALL. Signatures are validated at propose/accept time; the contract does not revalidate a mutable ERC-1271 signing policy at execute time. To withdraw an already accepted amendment, use the explicit order invalidation operation while eligible.
 
 The test ERC-1271 wallet is an owner-signature mock, not a Safe or production account integration.
+
+## Demo application settlement
+
+This is a local application policy layered around the amendment experiment. It is not a proposed universal acceptance/verification standard. Existing order-status values are preserved; new terminal values are appended: `None=0, Offered=1, Active=2, Submitted=3, Accepted=4, Cancelled=5, Refunded=6`.
+
+| Operation | Caller and precondition | Outcome |
+| --- | --- | --- |
+| `acceptDelivery(id, revision, termsHash, resultHash)` | Recorded buyer; Submitted; exact stored revision, terms hash and result hash | Accepted; full escrow paid to recorded provider; `OrderAccepted` and `OrderPaid` |
+| `cancelOfferedOrder(id)` | Recorded buyer; Offered | Cancelled; full escrow returned to buyer; `OrderRefunded` |
+| `refundExpiredOrder(id)` | Anyone; Offered or Active; `block.timestamp >= currentTerms.deadline` | Refunded; full escrow returned to buyer; `OrderRefunded` |
+
+The buyer reviews the actual result off-chain. The contract verifies caller and record bindings, not the quality, truth, availability or semantic satisfaction of the work. Buyer acceptance and payout are atomic in this fixture: a failed transfer rolls back both, including their logs, and can be retried with the same delivery. Application events distinguish the acceptance fact from the payment fact even though they share one transaction. These operations do not consume a new Core coordination.
+
+Cancellation means cancellation before provider activation. An Active order cannot be unilaterally cancelled early. If activation and cancellation compete, only the first successful transaction can transition the Offered order. Expiry refunds use the **current amended deadline**, and return the entire remaining escrow, including applied supplements. They never pay the caller instead of the buyer. Terminal orders cannot be paid/refunded twice or amended back into an active state.
+
+Submission requires `timestamp < deadline`; undelivered-order expiry refunds require `timestamp >= deadline`. Once validly Submitted, the order is no longer eligible for an expiry refund, and the buyer may accept after the delivery deadline. There is **no default payment, automatic refund or dispute resolver for submitted work**. A silent or dissatisfied buyer can leave the escrow locked indefinitely. That unresolved review policy is one reason this fixture is restricted to local test tokens.
+
+Payout/refund updates terminal status and zeros the order escrow before the external token call. Reentrancy protection and exact sender/recipient balance-delta checks apply. A transfer failure rolls back the entire transaction. One order's settlement does not release another order's escrow. These checks are not a guarantee of compatibility with arbitrary or malicious tokens.
 
 ## Validation and open questions
 

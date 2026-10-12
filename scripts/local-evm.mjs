@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { resolve } from 'node:path';
 import { JsonRpcProvider, ContractFactory, HDNodeWallet } from 'ethers';
-import { compile, root } from '../../scripts/compile.mjs';
+import { compile, root } from './compile.mjs';
 
 export async function localEvm() {
   const artifacts=compile();

@@ -2,7 +2,7 @@ import { test, before, after, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { id, MaxUint256, ZeroHash, Signature, TypedDataEncoder } from 'ethers';
-import { localEvm } from './helpers/evm.mjs';
+import { localEvm } from '../scripts/local-evm.mjs';
 import { domain, hashTerms, buildPayload, buildIntent, hashIntent, buildAcceptance, INTENT_TYPES, ACCEPTANCE_TYPES } from '../src/profile.mjs';
 
 let env,token,core,buyer,provider,outsider,buyerKey,providerKey,orderId,baseTerms,snapshot;

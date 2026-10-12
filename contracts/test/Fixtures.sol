@@ -14,6 +14,11 @@ contract TestToken is ERC20 {
     function mint(address to, uint256 amount) external { _mint(to, amount); }
     function setFailAfterTransfer(bool fail) external { failAfterTransfer = fail; }
     function setCallback(address target, bytes calldata data) external { callbackTarget = target; callbackData = data; }
+    function transfer(address to, uint256 amount) public override returns (bool) {
+        super.transfer(to, amount);
+        if (callbackTarget != address(0)) (callbackSucceeded,) = callbackTarget.call(callbackData);
+        return !failAfterTransfer;
+    }
     function transferFrom(address from, address to, uint256 amount) public override returns (bool) {
         super.transferFrom(from, to, amount);
         if (callbackTarget != address(0)) (callbackSucceeded,) = callbackTarget.call(callbackData);
