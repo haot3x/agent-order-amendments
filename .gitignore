@@ -1,0 +1,19 @@
+node_modules/
+.env
+.env.*
+!.env.example
+artifacts/
+*.log
+.DS_Store
+
+# Local workspace notes, account screenshots and forum publication records.
+# Public documentation lives in README.md and PROFILE.md.
+*.jpg
+*.png
+WORKSPACE.md
+community-participation.md
+implementation-plan.md
+forum-post.md
+status-*.md
+*-reply.md
+*-reply-draft.md

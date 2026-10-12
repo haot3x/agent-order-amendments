@@ -1,0 +1,31 @@
+{
+  "name": "agent-order-amendments-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Experimental ORDER_AMENDMENT_V1 profile over ERC-8001 with local EVM tests and fixed encoding vectors",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "demo": "node demo.mjs",
+    "test:evm": "node --test test/profile-evm.test.mjs",
+    "test:vectors": "node --test test/profile-vectors.test.mjs",
+    "compile": "node scripts/compile.mjs",
+    "vectors": "node scripts/generate-vectors.mjs"
+  },
+  "dependencies": {
+    "ethers": "6.17.0"
+  },
+  "devDependencies": {
+    "@foundry-rs/anvil": "1.7.1",
+    "@openzeppelin/contracts": "5.4.0",
+    "solc": "0.8.37",
+    "viem": "2.57.4"
+  },
+  "overrides": {
+    "tmp": "0.2.7"
+  },
+  "license": "MIT"
+}
