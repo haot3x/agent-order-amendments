@@ -19,7 +19,7 @@ contract TestToken is ERC20 {
         if (callbackTarget != address(0)) (callbackSucceeded,) = callbackTarget.call(callbackData);
         return !failAfterTransfer;
     }
-    function transferFrom(address from, address to, uint256 amount) public override returns (bool) {
+    function transferFrom(address from, address to, uint256 amount) public virtual override returns (bool) {
         super.transferFrom(from, to, amount);
         if (callbackTarget != address(0)) (callbackSucceeded,) = callbackTarget.call(callbackData);
         return !failAfterTransfer;

@@ -4,8 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
 export const root = fileURLToPath(new URL('../', import.meta.url));
-export function compile() {
-  const files = ['contracts/ExperimentalOrderAmendments.sol','contracts/test/Fixtures.sol'];
+export function compile(extraFiles = []) {
+  const files = ['contracts/ExperimentalOrderAmendments.sol','contracts/test/Fixtures.sol', ...extraFiles];
   const input = {language:'Solidity',sources:Object.fromEntries(files.map(f=>[f,{content:readFileSync(resolve(root,f),'utf8')}])),
     settings:{optimizer:{enabled:true,runs:200},viaIR:true,evmVersion:'cancun',outputSelection:{'*':{'*':['abi','evm.bytecode.object']}}}};
   const output = JSON.parse(solc.compile(JSON.stringify(input), {import: (path) => {

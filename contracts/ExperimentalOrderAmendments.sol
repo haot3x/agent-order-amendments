@@ -107,9 +107,14 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         if (amount == 0) return;
         uint256 fromBefore = asset.balanceOf(buyer);
         uint256 toBefore = asset.balanceOf(address(this));
-        asset.safeTransferFrom(buyer, address(this), amount);
+        _collectFunding(buyer, amount);
         require(asset.balanceOf(address(this)) == toBefore + amount, "RECEIVED_AMOUNT");
         require(asset.balanceOf(buyer) == fromBefore - amount, "DEBIT_AMOUNT");
+    }
+    /// @dev Funding hook for local integration fixtures. The caller retains the
+    /// exact balance checks and the application-call rollback boundary.
+    function _collectFunding(address buyer, uint256 amount) internal virtual {
+        asset.safeTransferFrom(buyer, address(this), amount);
     }
     function _release(Order storage o, address recipient) private returns (uint256 amount) {
         amount = o.escrow;

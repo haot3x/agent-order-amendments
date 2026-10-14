@@ -4,7 +4,7 @@ Experimental `ORDER_AMENDMENT_V1` profile over [ERC-8001](https://eips.ethereum.
 
 **Local test software. No ERC number has been assigned. Use only disposable test tokens on a local chain.** The Solidity example includes a minimal buyer-acceptance payout and undelivered-order refund fixture. It has no dispute resolution or review timeout, and has not been audited or deployed to a public network.
 
-Discussion: https://ethereum-magicians.org/t/pre-erc-discussion-agent-service-order-amendments/29936
+Discussion: https://ethereum-magicians.org/t/pre-erc-agent-service-order-amendments-erc-8001-profile/29936
 
 ## Run
 
@@ -20,6 +20,7 @@ The EVM tests compile Solidity 0.8.37 for Cancun, start a disposable Anvil node 
 
 ```sh
 npm run test:evm       # Local Solidity/EVM integration cases
+npm run test:spend-grants # ERC-8427 cap changes and atomic order funding
 npm run test:vectors   # ethers / viem encoding comparison
 npm run compile       # Optional ABI/bytecode output in ignored artifacts/
 npm run vectors       # Regenerate the committed deterministic vector
@@ -46,11 +47,13 @@ For `100 → 180 → 220`, supplements are 80 and 40. Price decreases, deadline 
 
 ## Evidence
 
-Local run on 2026-10-12: **62 tests passed**: 40 local EVM tests, 1 cross-library fixed-vector test and 21 original JavaScript model tests. The full local EVM demo also passed.
+Local run on 2026-10-14: **72 tests passed**: 50 local EVM tests (including 10 ERC-8427 integration cases), 1 cross-library fixed-vector test and 21 original JavaScript model tests. The full local EVM demo also passed, and regenerating the signed vector produced no changes.
 
 EVM cases include competing amendments, buyer/provider invalidation, insufficient balance and allowance, a token that moves funds then reports failure, a reentrant token callback, substituted payloads, expiry equality, compact signatures, and a mock ERC-1271 wallet. Solidity, ethers and independently declared viem encodings agree on the published vector.
 
 Settlement cases cover single payment, exact delivery binding, unauthorized acceptance, late buyer acceptance, refunds using the current amended deadline, preservation of another order's escrow, failed-transfer rollback/retry, refund reentrancy and terminal-order replay protection.
+
+The [ERC-8427 integration experiment](ERC8427.md) adds 10 local EVM cases against the pinned, unmodified upstream registered-grant registry and direct executor. They cover cap reduction after consent, revocation, atomic debit/transfer/revision rollback, fresh-consent retry and competing orders sharing one grant. The upstream contracts use solc 0.8.28; our fixture uses 0.8.37.
 
 This is authored and tested within one project. Cross-library agreement is not an independent adopter, external audit, or exhaustive ERC-8001 conformance certification.
 
@@ -60,12 +63,14 @@ This is authored and tested within one project. Cross-library agreement is not a
 | --- | --- |
 | [PROFILE.md](PROFILE.md) | Experimental wire format, state transitions and failure semantics |
 | [DEMO.md](DEMO.md) | Local demo walkthrough and application settlement policy |
+| [ERC8427.md](ERC8427.md) | Registered-grant funding integration and reproducible results |
 | [contracts/ExperimentalOrderAmendments.sol](contracts/ExperimentalOrderAmendments.sol) | Combined coordination/order execution experiment |
 | [contracts/test/Fixtures.sol](contracts/test/Fixtures.sol) | Disposable token and contract-wallet fixtures |
 | [src/profile.mjs](src/profile.mjs) | ethers encoding helpers |
 | [vectors/order-amendment-v1.json](vectors/order-amendment-v1.json) | Fixed bytes, hashes and signatures |
 | [test/profile-evm.test.mjs](test/profile-evm.test.mjs) | Local EVM integration tests |
 | [test/settlement-evm.test.mjs](test/settlement-evm.test.mjs) | Payout, cancellation and refund integration tests |
+| [test/spend-grants-evm.test.mjs](test/spend-grants-evm.test.mjs) | Upstream ERC-8427 integration cases |
 | [scripts/demo-evm.mjs](scripts/demo-evm.mjs) | Runnable local workflow with saved evidence |
 | [scripts/local-evm.mjs](scripts/local-evm.mjs) | Shared disposable-chain launcher for tests and demo |
 | [test/profile-vectors.test.mjs](test/profile-vectors.test.mjs) | Independent viem ABI/type declarations |

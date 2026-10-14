@@ -1,0 +1,27 @@
+{
+  "repository": "https://github.com/tankcdr/erc-spend-grants",
+  "commit": "d70b04cd3f72ea57882a1afd6c6514a02f96e1b1",
+  "license": "CC0-1.0",
+  "files": {
+    "SpendGrantTypes.sol": {
+      "upstreamPath": "src/SpendGrantTypes.sol",
+      "sha256": "c78e49034506922db50e53de6dde5d08559fd147feff17de31c369fceea3e31b"
+    },
+    "SpendGrantHash.sol": {
+      "upstreamPath": "src/SpendGrantHash.sol",
+      "sha256": "6572f9b14eec8d16d011920ec1fb663ae3c8087da636eb7f74b331cb9f7a7e64"
+    },
+    "SpendGrantRegistry.sol": {
+      "upstreamPath": "src/SpendGrantRegistry.sol",
+      "sha256": "04c32253b16bef8c287a80f8c88bf53049e823460740933619037a1139ff12ee"
+    },
+    "SpendGrantExecutor.sol": {
+      "upstreamPath": "src/SpendGrantExecutor.sol",
+      "sha256": "54fa0a3a83a29a6236215ac9cf062211aa83f6aeb5d1df3156e490ce28b97a13"
+    },
+    "SpendGrantSignature.sol": {
+      "upstreamPath": "src/SpendGrantSignature.sol",
+      "sha256": "5baace4510a7b5e6b444d32c23e809c43b6c4e0a5d868da4a815a2ac7d825152"
+    }
+  }
+}

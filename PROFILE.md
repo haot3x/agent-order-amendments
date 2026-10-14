@@ -152,6 +152,8 @@ Payout/refund updates terminal status and zeros the order escrow before the exte
 
 ## Validation and open questions
 
+The optional [ERC-8427 fixture](ERC8427.md) routes funding through a pinned registered-grant executor while preserving this profile's signed encoding and application rollback boundary. The base order contract still uses direct ERC-20 funding. The fixture is an application integration, not a change to ERC-8001 Core or an adopted standard. Its grant usage counts gross funding transfers; refunds do not restore that usage.
+
 The published vector is checked by ethers, independently declared viem ABI/types, and Solidity hash functions. The deployed EIP-712 domain is checked separately because the deterministic vector uses a fixed illustrative verifying-contract address.
 
 Tests exercise transaction-ordered competing candidates on a disposable local EVM. They do not establish multi-chain atomicity, real-world transaction inclusion guarantees, a database recovery protocol, or independent ecosystem adoption.
