@@ -11,7 +11,8 @@
     "test": "node --test test/*.test.mjs",
     "demo": "node scripts/demo-evm.mjs",
     "demo:model": "node demo.mjs",
-    "test:evm": "node --test test/profile-evm.test.mjs test/settlement-evm.test.mjs",
+    "test:evm": "node --test test/profile-evm.test.mjs test/settlement-evm.test.mjs test/spend-grants-evm.test.mjs",
+    "test:spend-grants": "node --test test/spend-grants-evm.test.mjs",
     "test:vectors": "node --test test/profile-vectors.test.mjs",
     "compile": "node scripts/compile.mjs",
     "vectors": "node scripts/generate-vectors.mjs"
@@ -23,6 +24,7 @@
     "@foundry-rs/anvil": "1.7.1",
     "@openzeppelin/contracts": "5.4.0",
     "solc": "0.8.37",
+    "solc-8427": "npm:solc@0.8.28",
     "viem": "2.57.4"
   },
   "overrides": {

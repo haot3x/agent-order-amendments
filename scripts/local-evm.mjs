@@ -4,8 +4,7 @@ import { resolve } from 'node:path';
 import { JsonRpcProvider, ContractFactory, HDNodeWallet } from 'ethers';
 import { compile, root } from './compile.mjs';
 
-export async function localEvm() {
-  const artifacts=compile();
+export async function localEvm(artifacts = compile()) {
   const proc=spawn(process.execPath,[resolve(root,'node_modules/@foundry-rs/anvil/bin.mjs'),
     '--host','127.0.0.1','--port','0','--chain-id','31337','--hardfork','cancun','--timestamp','2000000000'],{stdio:['ignore','pipe','pipe']});
   let output='';
