@@ -150,6 +150,14 @@ Submission requires `timestamp < deadline`; undelivered-order expiry refunds req
 
 Payout/refund updates terminal status and zeros the order escrow before the external token call. Reentrancy protection and exact sender/recipient balance-delta checks apply. A transfer failure rolls back the entire transaction. One order's settlement does not release another order's escrow. These checks are not a guarantee of compatibility with arbitrary or malicious tokens.
 
+## Discovery and tender composition
+
+[ERC-8444's author clarified](https://ethereum-magicians.org/t/erc-8444-agentic-resource-discovery-ard-onchain/29963/6) that its task payload is a hash-committed tender snapshot for discovery. Bilateral amendments belong in the order and settlement layer, with the discovery anchor providing the composition pointer. This profile therefore keeps the order ID, revision and terms hash in the order layer; it does not require adding them to the discovery payload.
+
+A discovery descriptor update, its hash, or its discovery level does not constitute either party's acceptance of an order amendment. Execution must still check both parties' explicit consent and the authoritative base revision, terms hash and amendment nonce, and apply supplemental funding and the new revision atomically. A descriptor hash and this profile's EIP-712 terms hash commit to different objects and are not interchangeable.
+
+ERC-8414 separately records the task version cited by each submission and fixes tender reward and deadlines at mint. This profile cannot directly increase an existing tender's reward or extend its deadlines. A future composition must define the mapping between tender versions and order revisions, preserve the version associated with delivered work, and specify whether an award survives a specification update before submission or the task is frozen at award time. No ERC-8414 or ERC-8444 adapter is implemented here; these are composition boundaries, not conformance or adoption claims.
+
 ## Validation and open questions
 
 The optional [ERC-8427 fixture](ERC8427.md) routes funding through a pinned registered-grant executor while preserving this profile's signed encoding and application rollback boundary. The base order contract still uses direct ERC-20 funding. The fixture is an application integration, not a change to ERC-8001 Core or an adopted standard. Its grant usage counts gross funding transfers; refunds do not restore that usage.
@@ -173,3 +181,6 @@ Open questions for review:
 | Specification revision consulted | https://github.com/ethereum/ERCs/blob/110d5c24b0ce6ee0043f2aeb1d4f575c7673d298/ERCS/erc-8001.md |
 | Scope feedback motivating this experiment | https://ethereum-magicians.org/t/pre-erc-discussion-agent-service-order-amendments/29936/4 |
 | Shared-budget integration question | https://ethereum-magicians.org/t/erc-8312-bounded-agent-actions/28851/75 |
+| ERC-8444 discovery/order boundary clarification | https://ethereum-magicians.org/t/erc-8444-agentic-resource-discovery-ard-onchain/29963/6 |
+| ERC-8414 task version and immutable tender terms, inspected revision | https://github.com/garyyang-finchip/task-token-standard/blob/e1d0bc6504a7b7a128fabcab4640ab1e266c6a5d/ERCS/erc-9999.md |
+| ERC-8414 award/admission discussion | https://ethereum-magicians.org/t/erc-8414-token-bound-task-tenders/29597/27 |

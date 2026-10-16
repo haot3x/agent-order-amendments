@@ -57,6 +57,8 @@ The [ERC-8427 integration experiment](ERC8427.md) adds 10 local EVM cases agains
 
 This is authored and tested within one project. Cross-library agreement is not an independent adopter, external audit, or exhaustive ERC-8001 conformance certification.
 
+The [discovery and tender composition notes](PROFILE.md#discovery-and-tender-composition) record the ERC-8444 author's clarification that bilateral amendments stay in the order/settlement layer, and the version and fixed-term boundaries for a future ERC-8414 integration. Neither adapter is implemented here.
+
 ## Files
 
 | File | Purpose |
