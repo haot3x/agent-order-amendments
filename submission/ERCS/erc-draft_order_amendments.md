@@ -24,17 +24,25 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 ### Scope and authoritative order
 
-This profile MUST use one chain, one buyer, one provider, one immutable [ERC-20](./eip-20.md) payment asset per order, and a combined coordinator/order contract. An order's identity, counterparties and asset MUST NOT change through an amendment. The coordinator MUST implement ERC-8001's interface, hashes, domain and lifecycle, subject to the additional profile restrictions below. [EIP-712](./eip-712.md), [ERC-1271](./eip-1271.md) and [EIP-2098](./eip-2098.md) provide the referenced signature mechanisms.
+This profile MUST use one chain, one buyer, one provider, one immutable [ERC-20](./eip-20.md) payment asset per order, and a combined coordinator/order contract. An order's identity, counterparties and asset MUST NOT change through an amendment. The coordinator MUST implement ERC-8001's interface, hashes, domain and lifecycle, subject to the additional profile restrictions below. [EIP-712](./eip-712.md), [ERC-1271](./eip-1271.md) and [ERC-2098](./eip-2098.md) provide the referenced signature mechanisms.
 
 The order application MUST make the authoritative buyer, provider, asset, revision, terms hash, complete current terms, amendment nonce and amendment eligibility inspectable. The initial order API and its storage layout are application-defined; this profile does not define a universal order-creation or settlement interface. The application MUST read the authoritative state during execution rather than relying on a client's cached view.
 
-Allowed amendments MUST have an unchanged or increased total price, an unchanged or extended deadline, and no previously submitted deliverable. Scope and acceptance commitments MAY change. A successful amendment MUST change the full terms hash. Scope and acceptance hashes MUST be nonzero commitments to exact document bytes; they do not guarantee availability or work quality. Signers SHOULD obtain those documents and a readable comparison before accepting.
+The buyer and provider MUST be distinct nonzero addresses. Allowed amendments MUST have a positive, unchanged or increased total price, an unchanged or extended deadline, and no previously submitted deliverable. Scope and acceptance commitments MAY change. A successful amendment MUST change the full terms hash. Scope and acceptance hashes MUST be nonzero commitments to exact document bytes; they do not guarantee availability or work quality. Signers SHOULD obtain those documents and a readable comparison before accepting.
 
 Price decreases, deadline shortening, post-submission amendments, partial-delivery adjustments, provider or asset replacement and cross-chain application are outside this profile. No discovery record, award, allowance, preflight result or budget grant substitutes for the two parties' explicit consent. Conversely, consent does not reserve capacity under an external funding policy.
 
+All prices and supplements MUST use the payment asset's raw integer units, without decimal conversion. Deadlines, `validUntil`, intent expiry and acceptance expiry MUST be Unix timestamps in seconds. An order is active only after its initial agreement is effective, while it is neither cancelled nor settled and has no submitted work; the application MUST NOT report an order as eligible merely because it holds tokens.
+
 ### Signed representation
 
-The EIP-712 domain is `{ name: "ERC-8001", version: "1", chainId, verifyingContract }`. `verifyingContract` is also the order contract in this profile. The asset and order counterparties are immutable within that contract's order state.
+The EIP-712 domain MUST be:
+
+```text
+{ name: "ERC-8001", version: "1", chainId, verifyingContract }
+```
+
+`verifyingContract` MUST also be `AmendmentData.orderContract`. The payment asset and order counterparties MUST be immutable within that contract's order state.
 
 Identifiers are Keccak-256 of the exact UTF-8 strings:
 
@@ -70,7 +78,7 @@ struct AmendmentData {
 }
 ```
 
-All fields in this tuple are static ABI values, including the nested terms tuple. Encoding is 11 consecutive 32-byte slots (352 bytes); no dynamic tuple offset. Decode/re-encode equality rejects trailing bytes and noncanonical representations. `newTermsHash` must equal the struct hash of the complete `newTerms`.
+All fields in this tuple are static ABI values, including the nested terms tuple. Encoding is 11 consecutive 32-byte slots (352 bytes); no dynamic tuple offset. Decode/re-encode equality rejects trailing bytes and noncanonical representations. `newTermsHash` MUST equal the struct hash of the complete `newTerms`.
 
 The payload hash is:
 
@@ -85,7 +93,7 @@ keccak256(abi.encode(
 ))
 ```
 
-This profile requires payload `conditionsHash == bytes32(0)` and empty `metadata`. `timestamp` is informational and signed through the payload hash; it does not establish execution time. Acceptance criteria belong in `Terms.acceptanceHash`, not in an ignored opaque condition field.
+The payload MUST have `conditionsHash == bytes32(0)` and empty `metadata`. `timestamp` is informational and signed through the payload hash; it does not establish execution time. Acceptance criteria belong in `Terms.acceptanceHash`, not in an ignored opaque condition field.
 
 `AgentIntent` and `AcceptanceAttestation` use ERC-8001's type strings. `getIntentHash` returns the **struct hash**, not the full domain-prefixed digest. Each acceptance contains that struct hash and is signed under its own EIP-712 digest.
 
@@ -98,15 +106,15 @@ This profile requires payload `conditionsHash == bytes32(0)` and empty `metadata
 | intent.coordinationValue | Zero; funding is computed from current order terms, not this informational field |
 | acceptance.nonce | Zero; optional Core acceptance nonces are not enabled |
 | acceptance.conditionsHash | Zero; nonzero constraints are rejected rather than silently ignored |
-| acceptance.participant | One of the two authoritative participants; its signature must validate |
-| acceptCoordination caller | Must be a listed participant; one participant may submit the other's valid attestation |
-| executionData | Must be empty; no unsigned target, price, recipient or terms override |
+| acceptance.participant | One of the two authoritative participants; its signature MUST validate |
+| acceptCoordination caller | MUST be a listed participant; one participant may submit the other's valid attestation |
+| executionData | MUST be empty; no unsigned target, price, recipient or terms override |
 
 JSON vectors serialize integers as base-10 strings. Hashes and addresses are hexadecimal strings. JSON text itself is not the hashed message.
 
 ### Consent and application
 
-Both participants, including the initiator, must explicitly accept. Proposing does not count as an acceptance. Proposals and acceptances do not alter the order, secure extra funds or establish that execution will succeed.
+Both participants, including the initiator, MUST explicitly accept. Proposing does not count as an acceptance. Proposals and acceptances do not alter the order, secure extra funds or establish that execution will succeed.
 
 The coordinator implements the Core status values `None, Proposed, Ready, Executed, Cancelled, Expired`. Core signature nonces, order revisions and order amendment nonces have distinct meanings:
 
@@ -126,7 +134,7 @@ An isolated EVM self-call then checks:
 5. Price/deadline restrictions and nonempty scope/acceptance commitments.
 6. The supplemental transfer is exactly `newTerms.totalPrice - currentTerms.totalPrice`.
 
-The transfer, escrow accounting, terms replacement, revision/nonce increments and `OrderAmendmentApplied` event all occur in this call. The application MUST verify the exact buyer and escrow token-balance deltas and reject mismatches. This does not establish safe support for arbitrary malicious, rebasing or fee-charging tokens.
+The transfer, escrow accounting, terms replacement, revision/nonce increments and `OrderAmendmentApplied` event MUST all occur in this isolated call. A successful application MUST return `abi.encode(orderId, revision, newTermsHash, supplement)` using types `(bytes32, uint64, bytes32, uint256)`. The application MUST verify the exact buyer and escrow token-balance deltas and reject mismatches. This does not establish safe support for arbitrary malicious, rebasing or fee-charging tokens.
 
 Execution and invalidation are ordered by transactions. Invalidation does not undo an already applied change. At most one amendment can apply against a given base revision. After a deadline extension, later amendments use the new current deadline.
 
@@ -138,21 +146,19 @@ Execution and invalidation are ordered by transactions. Invalidation does not un
 | Stale order revision/nonce, ineligible order, expired amendment, failed funding or out-of-profile terms | Executed, success=false | All application-call writes and logs rolled back |
 | Successful application | Executed, success=true, plus OrderAmendmentApplied | New authoritative revision and additional escrow |
 
-Consumers must inspect success and the authoritative order/application event. `Ready` is consent readiness; `Executed` alone is not proof of successful amendment.
+Consumers MUST inspect success and the authoritative order/application event. `Ready` is consent readiness; `Executed` alone is not proof of successful amendment.
 
-A failed application consumes the Core intent but does not increment the order nonce/revision. A retry requires a new Core intent nonce/hash and new acceptances from both parties. It can reference the same order base state if that state is still authoritative. The implementation does not automatically reuse old acceptances.
+A failed application consumes the Core intent but does not increment the order nonce/revision. A retry requires a new Core intent nonce/hash and new acceptances from both parties. It can reference the same order base state if that state is still authoritative. Implementations MUST NOT automatically reuse acceptances of the consumed intent for the retry.
 
-Any caller may execute a Ready coordination, including a relayer. Consequently, an execution attempt during temporary funding failure can consume the intent before the parties want to retry; gas constraints can also affect attempts. This profile accepts that liveness tradeoff. A production execution policy requires further design and review; the current implementation does not claim griefing-resistant scheduling.
+Implementations MUST allow any caller to execute a Ready coordination, including a relayer. Consequently, an execution attempt during temporary funding failure can consume the intent before the parties want to retry; gas constraints can also affect attempts. This profile accepts that liveness tradeoff and does not provide griefing-resistant scheduling. An implementation that requires additional execution authorization implements a different execution policy and MUST NOT silently treat it as this profile.
 
-The same rollback boundary covers a token that moves funds and then returns false. Reentrancy protection covers public mutation entry points; the application helper is callable only by the coordinator itself.
+The same rollback boundary covers a token that moves funds and then returns false. Implementations MUST prevent reentrant public mutations and MUST restrict the application helper to calls from the coordinator itself.
 
 ### Submission and signatures
 
-Only the provider may submit, before the current order deadline, with the exact current revision, terms hash and nonzero result hash. Submission changes order status to Submitted and disables all later amendments.
+An application accepting a delivery MUST restrict submission to the recorded provider before the current order deadline and MUST require the exact current revision, terms hash and a nonzero result hash. A valid submission MUST make the order ineligible for all subsequent amendments in this profile. This rule does not prescribe the submission method's selector or a global order-status enum.
 
-EOA signatures accept low-s 65-byte ECDSA and compact 64-byte EIP-2098 encodings. Contract signers use ERC-1271 via STATICCALL. Signatures are validated at propose/accept time; the contract does not revalidate a mutable ERC-1271 signing policy at execute time. To withdraw an already accepted amendment, use the explicit order invalidation operation while eligible.
-
-
+Implementations MUST support low-s 65-byte ECDSA and compact 64-byte ERC-2098 signatures for EOAs and ERC-1271 signatures for contract signers, using STATICCALL for contract validation. Invalid signatures MUST be rejected. Signatures MUST be validated at proposal/acceptance time; this profile MUST NOT revalidate a mutable ERC-1271 signing policy at execution time. To withdraw an already accepted amendment, use the explicit order invalidation operation while eligible.
 
 ### Application events and invalidation
 
