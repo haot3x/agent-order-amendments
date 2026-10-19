@@ -2,7 +2,7 @@
 
 Experimental `ORDER_AMENDMENT_V1` profile over [ERC-8001](https://eips.ethereum.org/EIPS/eip-8001): two parties agree to new order terms, and supplemental funding and the new revision take effect together.
 
-**Local test software. No ERC number has been assigned. Use only disposable test tokens on a local chain.** The Solidity example includes a minimal buyer-acceptance payout and undelivered-order refund fixture. It has no dispute resolution or review timeout, and has not been audited or deployed to a public network.
+**Local test software. ERC-8448 has been assigned; the [official Draft submission](https://github.com/ethereum/ERCs/pull/2082) is awaiting editor approval and merge. Use only disposable test tokens on a local chain.** The Solidity example includes a minimal buyer-acceptance payout and undelivered-order refund fixture. It has no dispute resolution or review timeout, and has not been audited or deployed to a public network.
 
 Discussion: https://ethereum-magicians.org/t/pre-erc-agent-service-order-amendments-erc-8001-profile/29936
 

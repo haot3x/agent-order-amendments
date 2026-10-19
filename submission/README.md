@@ -1,11 +1,11 @@
 # ERC submission preparation
 
-This directory contains the proposed order-amendment profile over ERC-8001, submitted for editor review in [ethereum/ERCs PR 2082](https://github.com/ethereum/ERCs/pull/2082). No ERC number has been assigned. Submission is not evidence of standards approval.
+This directory contains the proposed order-amendment profile over ERC-8001, submitted for editor review in [ethereum/ERCs PR 2082](https://github.com/ethereum/ERCs/pull/2082). Editor/associate @abcoathup assigned ERC-8448 on 19 October 2026. The official PR is still awaiting editor approval and merge; numbering is not standards approval.
 
-- [Proposed specification](ERCS/erc-draft_order_amendments.md)
-- [Deterministic vector](assets/erc-draft_order_amendments/order-amendment-v1.json)
+- [Proposed specification](ERCS/erc-8448.md)
+- [Deterministic vector](assets/erc-8448/order-amendment-v1.json)
 
-The layout mirrors the destination repository: a template document under `ERCS/`, local assets, and the official CC0 license. The draft follows the template's unassigned filename convention and deliberately omits a numeric `eip` header. Its filename, asset directory and local asset link will be renamed together when the editors assign a number. This package's `status: Draft` is the requested initial status, not a status already granted by an editor.
+The layout mirrors the destination repository: a template document under `ERCS/`, local assets, and the official CC0 license. The document includes `eip: 8448`; its filename and asset directory use the assigned number. The document's `../assets/eip-8448/` link follows the destination website build, which renames `erc-` asset directories to `eip-`. This package's `status: Draft` is the requested initial status, not a status already granted by an editor.
 
 ## Review focus
 
@@ -16,7 +16,7 @@ The layout mirrors the destination repository: a template document under `ERCS/`
 
 ## Validation
 
-The 72 existing implementation tests passed again on 19 October 2026; no runtime code changed. The submitted vector is identical to the existing vector. Markdownlint and Codespell passed using the destination repository's configuration and whitelist. EIPW 0.11.0, using the destination lint/modifier configuration and merged proposal references, reports only the absent editor-assigned `eip` header in a full run. An unassigned-only run omitting that required header and the numeric filename checks has zero remaining diagnostics; substantive checks remain enabled. The official repository's complete CI and editor review are separate from these local results.
+The 72 existing implementation tests passed again on 19 October 2026; no runtime code changed. The submitted vector is identical to the existing vector. Markdownlint and Codespell passed using the destination repository's configuration and whitelist. After applying the assigned number, full EIPW 0.11.0 reports zero diagnostics using the destination lint/modifier configuration and merged proposal references, with all numbering checks enabled. The rendered asset link was also corrected for the destination website layout. Official CI is running again on the updated submission. The official repository's complete CI and editor review are separate from these local results.
 
 The assets use the same vector as `vectors/order-amendment-v1.json`. No executable code changes with this package. The reference code outside this directory remains MIT licensed; this submission text and its data are offered under [CC0](LICENSE.md), as required for an ERC submission.
 
