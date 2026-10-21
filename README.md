@@ -4,7 +4,9 @@ Experimental `ORDER_AMENDMENT_V1` profile over [ERC-8001](https://eips.ethereum.
 
 **Local test software. ERC-8448 has been assigned; the [official Draft submission](https://github.com/ethereum/ERCs/pull/2082) is awaiting editor approval and merge. Use only disposable test tokens on a local chain.** The Solidity example includes a minimal buyer-acceptance payout and undelivered-order refund fixture. It has no dispute resolution or review timeout, and has not been audited or deployed to a public network.
 
-Discussion: https://ethereum-magicians.org/t/pre-erc-agent-service-order-amendments-erc-8001-profile/29936
+Author: Ted (@haot3x)
+
+Discussion: https://ethereum-magicians.org/t/erc-8448-agent-service-order-amendments/29936
 
 ## Run
 
@@ -20,6 +22,7 @@ The EVM tests compile Solidity 0.8.37 for Cancun, start a disposable Anvil node 
 
 ```sh
 npm run test:evm       # Local Solidity/EVM integration cases
+npm run test:state     # Common read ABI and viem amendment workflow
 npm run test:spend-grants # ERC-8427 cap changes and atomic order funding
 npm run test:vectors   # ethers / viem encoding comparison
 npm run compile       # Optional ABI/bytecode output in ignored artifacts/
@@ -34,6 +37,7 @@ Documents, signed payloads, balances and transaction/event receipts are written 
 
 ## What is implemented
 
+- A common `getAmendmentState(orderId)` view for parties, asset, revision, complete terms, terms hash, amendment nonce and order eligibility.
 - Canonical signed payload containing the exact order, base revision, base terms hash, amendment nonce, complete replacement terms and validity deadline.
 - ERC-8001 intent and explicit acceptance from both order parties, including the initiator; EOA 65-byte / EIP-2098 signatures and an ERC-1271 path.
 - An order-level nonce that either party can advance to invalidate pending amendments without cancelling the underlying order.
@@ -47,13 +51,15 @@ For `100 → 180 → 220`, supplements are 80 and 40. Price decreases, deadline 
 
 ## Evidence
 
-Local run on 2026-10-14: **72 tests passed**: 50 local EVM tests (including 10 ERC-8427 integration cases), 1 cross-library fixed-vector test and 21 original JavaScript model tests. The full local EVM demo also passed, and regenerating the signed vector produced no changes.
+Local run on 2026-10-21: **81 tests passed**: 59 local EVM tests (including 10 ERC-8427 integration cases), 1 cross-library fixed-vector test and 21 original JavaScript model tests. The full local EVM demo also passed, and regenerating the signed vector produced no changes.
 
 EVM cases include competing amendments, buyer/provider invalidation, insufficient balance and allowance, a token that moves funds then reports failure, a reentrant token callback, substituted payloads, expiry equality, compact signatures, and a mock ERC-1271 wallet. Solidity, ethers and independently declared viem encodings agree on the published vector.
 
 Settlement cases cover single payment, exact delivery binding, unauthorized acceptance, late buyer acceptance, refunds using the current amended deadline, preservation of another order's escrow, failed-transfer rollback/retry, refund reentrancy and terminal-order replay protection.
 
 The [ERC-8427 integration experiment](ERC8427.md) adds 10 local EVM cases against the pinned, unmodified upstream registered-grant registry and direct executor. They cover cap reduction after consent, revocation, atomic debit/transfer/revision rollback, fresh-consent retry and competing orders sharing one grant. The upstream contracts use solc 0.8.28; our fixture uses 0.8.37.
+
+The [common-view workflow](STATE-VIEW.md) adds nine EVM cases. A viem client declares its ABI and encodings separately, reads the base state, signs, applies an amendment and verifies the new revision. Cases cover unknown IDs, ineligible states, deadline equality, nonce invalidation, funding failure and a second read-only storage-layout fixture. That fixture is not a second complete ERC-8448 implementation.
 
 This is authored and tested within one project. Cross-library agreement is not an independent adopter, external audit, or exhaustive ERC-8001 conformance certification.
 
@@ -64,6 +70,9 @@ The [discovery and tender composition notes](PROFILE.md#discovery-and-tender-com
 | File | Purpose |
 | --- | --- |
 | [PROFILE.md](PROFILE.md) | Experimental wire format, state transitions and failure semantics |
+| [STATE-VIEW.md](STATE-VIEW.md) | Common read ABI, viem client and executable state-view workflow |
+| [examples/independent-client.mjs](examples/independent-client.mjs) | Separately declared ABI, amendment encoding and typed data |
+| [test/amendment-state-evm.test.mjs](test/amendment-state-evm.test.mjs) | State view semantics and client-to-contract workflow |
 | [DEMO.md](DEMO.md) | Local demo walkthrough and application settlement policy |
 | [ERC8427.md](ERC8427.md) | Registered-grant funding integration and reproducible results |
 | [contracts/ExperimentalOrderAmendments.sol](contracts/ExperimentalOrderAmendments.sol) | Combined coordination/order execution experiment |

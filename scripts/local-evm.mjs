@@ -22,7 +22,7 @@ export async function localEvm(artifacts = compile()) {
     const a=artifacts[name];const c=await new ContractFactory(a.abi,a.bytecode,signer).deploy(...args);
     await c.waitForDeployment();return c;
   };
-  return {rpc,wallets,signers,deploy,close:async()=>{
+  return {url,rpc,wallets,signers,deploy,close:async()=>{
     rpc.destroy();if(proc.exitCode===null){const done=once(proc,'exit');proc.kill('SIGTERM');await done;}
   }};
 }

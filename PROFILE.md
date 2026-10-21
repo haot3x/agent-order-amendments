@@ -1,6 +1,6 @@
 # ORDER_AMENDMENT_V1 — experimental profile 0.1
 
-Status: implementation experiment over ERC-8001, not an assigned ERC or an adopted extension. Breaking revisions must use a new profile identifier. This document describes this repository's behavior, not additions already accepted into ERC-8001.
+Status: implementation experiment for the assigned ERC-8448 proposal over ERC-8001. The [official Draft submission](https://github.com/ethereum/ERCs/pull/2082) awaits editor approval and merge; assignment is not standards approval. Breaking revisions must use a new profile identifier. This document describes this repository's behavior, not additions already accepted into ERC-8001.
 
 ## Scope
 
@@ -81,6 +81,34 @@ This profile requires payload `conditionsHash == bytes32(0)` and empty `metadata
 | executionData | Must be empty; no unsigned target, price, recipient or terms override |
 
 JSON vectors serialize integers as base-10 strings. Hashes and addresses are hexadecimal strings. JSON text itself is not the hashed message.
+
+## Amendment state view
+
+Every implementation MUST expose this view with the exact input and return types and field order below. `Terms` is the struct defined above.
+
+```solidity
+error UnknownOrder(bytes32 orderId);
+
+function getAmendmentState(bytes32 orderId) external view returns (
+    address buyer,
+    address provider,
+    address paymentAsset,
+    uint64 revision,
+    bytes32 termsHash,
+    uint256 amendmentNonce,
+    Terms memory terms,
+    bool eligible
+);
+```
+
+The view MUST be callable by any address. An unknown order, including an unused zero ID, MUST revert with `UnknownOrder(orderId)` rather than return a zero-filled state. A known order MUST remain readable when ineligible; ineligibility alone MUST NOT cause the view to revert. The returned `termsHash` MUST be the struct hash of the returned complete `terms`, and the counterparties, payment asset, revision and amendment nonce MUST be the same authoritative values execution checks. All fields MUST describe the state at the queried block; clients MAY pin the call to a block using their chain RPC.
+
+`eligible` MUST be true if and only if the existing agreement is effective, the order is neither cancelled nor settled, no deliverable has been submitted, and `block.timestamp < terms.deadline`. An offer awaiting its initial agreement, a submitted or terminal order, and equality with the current deadline MUST return false. After an applied deadline extension the view MUST use the new deadline. An invalidation advances the returned amendment nonce without changing the revision or terms.
+
+The flag describes order eligibility only. It MUST NOT depend on a proposed amendment, signatures, token balances, allowances or an external grant's capacity, and MUST NOT be interpreted as a funding reservation or an execution guarantee. A later transaction can change the returned base state. Execution MUST recheck authoritative state, expiry and funding as specified below, even when a prior read returned true. This view does not standardize an order-status enum, order creation, work submission or settlement.
+
+
+The existing `getOrder` method remains an application convenience. Clients can use the common view without its application-specific status enum or storage layout. See [STATE-VIEW.md](STATE-VIEW.md) for the separately declared viem client and executable workflow.
 
 ## Consent and application
 

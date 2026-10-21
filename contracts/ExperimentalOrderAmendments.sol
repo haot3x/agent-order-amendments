@@ -55,6 +55,8 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
     mapping(bytes32 => Coordination) private coordinations;
     mapping(address => uint64) private agentNonces;
 
+    error UnknownOrder(bytes32 orderId);
+
     event CoordinationProposed(bytes32 indexed intentHash, address indexed proposer, bytes32 coordinationType, uint256 participantCount, uint256 coordinationValue);
     event CoordinationAccepted(bytes32 indexed intentHash, address indexed participant, bytes32 acceptanceHash, uint256 acceptedCount, uint256 requiredCount);
     event CoordinationExecuted(bytes32 indexed intentHash, address indexed executor, bool success, uint256 gasUsed, bytes result);
@@ -147,6 +149,25 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         o.status = OrderStatus.Active; emit OrderActivated(id);
     }
     function getOrder(bytes32 id) external view returns (Order memory) { return orders[id]; }
+    /// @notice Common ERC-8448 read surface; eligibility does not reserve funding.
+    function getAmendmentState(bytes32 orderId) external view returns (
+        address buyer,
+        address provider,
+        address paymentAsset,
+        uint64 revision,
+        bytes32 termsHash,
+        uint256 amendmentNonce,
+        Terms memory terms,
+        bool eligible
+    ) {
+        Order storage o = orders[orderId];
+        if (o.status == OrderStatus.None) revert UnknownOrder(orderId);
+        return (
+            o.buyer, o.provider, address(asset), o.revision, o.termsHash,
+            o.amendmentNonce, o.terms,
+            o.status == OrderStatus.Active && block.timestamp < o.terms.deadline
+        );
+    }
     function invalidateAmendments(bytes32 id) external nonReentrant {
         Order storage o = orders[id];
         require(msg.sender == o.buyer || msg.sender == o.provider, "PARTY");
