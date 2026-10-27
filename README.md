@@ -63,7 +63,9 @@ The [ERC-8427 integration experiment](ERC8427.md) adds 10 local EVM cases agains
 
 The [common-view workflow](STATE-VIEW.md) adds nine EVM cases. A viem client declares its ABI and encodings separately, reads the base state, signs, applies an amendment and verifies the new revision. Cases cover unknown IDs, ineligible states, deadline equality, nonce invalidation, funding failure and a second read-only storage-layout fixture. That fixture is not a second complete ERC-8448 implementation.
 
-This is authored and tested within one project. Cross-library agreement is not an independent adopter, external audit, or exhaustive ERC-8001 conformance certification.
+External reproduction reported on 2026-10-27: [Revinand ran the quickstart](https://ethereum-magicians.org/t/erc-8448-agent-service-order-amendments/29936/10) at commit `6d58faba27a32e802f11c4919cfd9682489976ba` on Ubuntu 24.04.5 LTS x86_64, Node.js 24.8.0 and npm 11.6.0. Installation succeeded, all 9 state-view cases and all 81 full-suite tests passed, and the lifecycle demo passed. The report confirms revision/nonce advancement, the supplemental transfer, failed-funding state preservation, final balances and both refunds.
+
+The implementation and supplied client are authored within one project. The linked report is an external run of that code; it does not establish a second independently written implementation, adoption, an external audit, or exhaustive ERC-8001 conformance certification.
 
 The [discovery and tender composition notes](PROFILE.md#discovery-and-tender-composition) record the ERC-8444 author's clarification that bilateral amendments stay in the order/settlement layer, and the version and fixed-term boundaries for a future ERC-8414 integration. Neither adapter is implemented here.
 
