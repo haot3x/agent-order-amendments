@@ -10,6 +10,8 @@ Discussion: https://ethereum-magicians.org/t/erc-8448-agent-service-order-amendm
 
 ## Run
 
+New reviewer? Start with the [five-minute reproduction guide](QUICKSTART.md): a pinned implementation, two commands, expected state and balance changes, and a short feedback template.
+
 Node.js 22 or newer; Node.js 24 is used in CI. Anvil is installed as a pinned platform-specific npm dependency. No global Foundry installation, RPC URL or private key is required.
 
 ```sh
@@ -69,6 +71,7 @@ The [discovery and tender composition notes](PROFILE.md#discovery-and-tender-com
 
 | File | Purpose |
 | --- | --- |
+| [QUICKSTART.md](QUICKSTART.md) | Five-minute external reproduction with expected results and a feedback template |
 | [PROFILE.md](PROFILE.md) | Experimental wire format, state transitions and failure semantics |
 | [STATE-VIEW.md](STATE-VIEW.md) | Common read ABI, viem client and executable state-view workflow |
 | [examples/independent-client.mjs](examples/independent-client.mjs) | Separately declared ABI, amendment encoding and typed data |
