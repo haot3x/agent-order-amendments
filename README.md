@@ -26,6 +26,7 @@ The EVM tests compile Solidity 0.8.37 for Cancun, start a disposable Anvil node 
 npm run test:evm       # Local Solidity/EVM integration cases
 npm run test:state     # Common read ABI and viem amendment workflow
 npm run test:spend-grants # ERC-8427 cap changes and atomic order funding
+npm run test:criteria  # ERC-8412 mutual consent and atomic criteria supersession
 npm run test:vectors   # ethers / viem encoding comparison
 npm run compile       # Optional ABI/bytecode output in ignored artifacts/
 npm run vectors       # Regenerate the committed deterministic vector
@@ -53,13 +54,15 @@ For `100 → 180 → 220`, supplements are 80 and 40. Price decreases, deadline 
 
 ## Evidence
 
-Local run on 2026-10-21: **81 tests passed**: 59 local EVM tests (including 10 ERC-8427 integration cases), 1 cross-library fixed-vector test and 21 original JavaScript model tests. The full local EVM demo also passed, and regenerating the signed vector produced no changes.
+Local run on 2026-11-02: **89 tests passed**: 67 local EVM tests (including 10 ERC-8427 and 8 ERC-8412 integration cases), 1 cross-library fixed-vector test and 21 original JavaScript model tests. The full local EVM demo also passed, and regenerating the signed vector produced no changes.
 
 EVM cases include competing amendments, buyer/provider invalidation, insufficient balance and allowance, a token that moves funds then reports failure, a reentrant token callback, substituted payloads, expiry equality, compact signatures, and a mock ERC-1271 wallet. Solidity, ethers and independently declared viem encodings agree on the published vector.
 
 Settlement cases cover single payment, exact delivery binding, unauthorized acceptance, late buyer acceptance, refunds using the current amended deadline, preservation of another order's escrow, failed-transfer rollback/retry, refund reentrancy and terminal-order replay protection.
 
 The [ERC-8427 integration experiment](ERC8427.md) adds 10 local EVM cases against the pinned, unmodified upstream registered-grant registry and direct executor. They cover cap reduction after consent, revocation, atomic debit/transfer/revision rollback, fresh-consent retry and competing orders sharing one grant. The upstream contracts use solc 0.8.28; our fixture uses 0.8.37.
+
+The [ERC-8412 experiment](ERC8412.md) tests mutually authorized criteria supersession, atomic rollback on funding failure, final-verdict restrictions and an explicit no-carry-forward evidence policy. It uses the real pinned registry, not a full off-chain verifier.
 
 The [common-view workflow](STATE-VIEW.md) adds nine EVM cases. A viem client declares its ABI and encodings separately, reads the base state, signs, applies an amendment and verifies the new revision. Cases cover unknown IDs, ineligible states, deadline equality, nonce invalidation, funding failure and a second read-only storage-layout fixture. That fixture is not a second complete ERC-8448 implementation.
 

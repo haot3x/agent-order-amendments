@@ -286,12 +286,17 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         require(d.newTermsHash != o.termsHash, "NO_CHANGE");
         require(d.newTerms.totalPrice >= o.terms.totalPrice && d.newTerms.deadline >= o.terms.deadline, "OUT_OF_PROFILE");
         uint256 delta = d.newTerms.totalPrice - o.terms.totalPrice;
+        _beforeAmendment(d, o);
         _fund(o.buyer, delta);
         o.terms = d.newTerms; o.termsHash = d.newTermsHash; o.escrow += delta;
         ++o.revision; ++o.amendmentNonce;
         emit OrderAmendmentApplied(h, d.orderId, o.revision, d.baseTermsHash, d.newTermsHash, delta);
         return abi.encode(d.orderId, o.revision, d.newTermsHash, delta);
     }
+    /// @dev Optional integration hook inside the isolated application transaction.
+    /// Authorization and stale-state checks precede it; funding failure reverts it.
+    function _beforeAmendment(AmendmentData memory d, Order storage current) internal virtual {}
+
     function cancelCoordination(bytes32 h, string calldata reason) external nonReentrant {
         Coordination storage c = coordinations[h];
         require(c.status == Status.Proposed || c.status == Status.Ready, "NOT_CANCELLABLE");

@@ -1,0 +1,42 @@
+
+> agent-order-amendments-prototype@0.1.0 demo
+> node scripts/demo-evm.mjs
+
+Finch-style local order demo — synthetic projects, disposable TEST tokens, no public network.
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+  --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:92:29:
+   |
+92 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, signature);
+   |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:119:29:
+    |
+119 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, r, vs);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:161:29:
+    |
+161 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, v, r, s);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:169:26:
+    |
+169 |     function _throwError(RecoverError error, bytes32 errorArg) private pure {
+    |                          ^^^^^^^^^^^^^^^^^^
+
+1. Buyer funds the order: Offered, revision=0, order escrow=100.0 TEST; buyer=900.0, provider=0.0
+2. Provider starts work: Active, revision=0, order escrow=100.0 TEST; buyer=900.0, provider=0.0
+3. Both agreed; amendment is Ready: Active, revision=0, order escrow=100.0 TEST; buyer=900.0, provider=0.0
+4. Supplement funded; new version is effective: Active, revision=1, order escrow=180.0 TEST; buyer=820.0, provider=0.0
+5. Work submitted; payment awaits buyer review: Submitted, revision=1, order escrow=180.0 TEST; buyer=820.0, provider=0.0
+   Buyer-side checks passed: 10 agreed IDs, required fields, fixture correspondence, exact result hash.
+6. Buyer accepted and provider was paid: Accepted, revision=1, order escrow=0.0 TEST; buyer=820.0, provider=180.0
+7. Unactivated offer cancelled and refunded: Cancelled, revision=0, order escrow=0.0 TEST; buyer=820.0, provider=180.0
+8. Undelivered order timed out and was refunded: Refunded, revision=0, order escrow=0.0 TEST; buyer=820.0, provider=180.0
+
+PASS: provider received 180 TEST once; both refunds returned to buyer; escrow balance is zero.
+Saved documents, signatures and transaction receipts: <project-root>/artifacts/local-order-demo
+The disposable local chain is now stopped. Receipts are local evidence, not public explorer records.

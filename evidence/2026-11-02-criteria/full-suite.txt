@@ -1,0 +1,221 @@
+
+> agent-order-amendments-prototype@0.1.0 test
+> node --test test/*.test.mjs
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+  --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:92:29:
+   |
+92 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, signature);
+   |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:119:29:
+    |
+119 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, r, vs);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:161:29:
+    |
+161 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, v, r, s);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:169:26:
+    |
+169 |     function _throwError(RecoverError error, bytes32 errorArg) private pure {
+    |                          ^^^^^^^^^^^^^^^^^^
+
+✔ public getter ABI agrees with the separately declared client ABI (533.694208ms)
+✔ unknown and zero order IDs revert with the common UnknownOrder error (26.909792ms)
+✔ deadline equality is ineligible while complete current state stays readable (69.516542ms)
+✔ offered, cancelled, submitted, accepted and refunded orders remain readable but ineligible (449.783459ms)
+✔ a block-pinned read and a current read distinguish explicit invalidation (80.738583ms)
+✔ independent viem client reads, constructs, signs and applies an amendment through the common view (335.06425ms)
+✔ a successful read does not reserve its nonce against later invalidation (359.323042ms)
+✔ eligible=true does not promise funding and a failed supplement leaves the view unchanged (357.87825ms)
+✔ the same client reads a separately implemented storage fixture with no getOrder or hash helpers (81.991334ms)
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+  --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:92:29:
+   |
+92 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, signature);
+   |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:119:29:
+    |
+119 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, r, vs);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:161:29:
+    |
+161 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, v, r, s);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:169:26:
+    |
+169 |     function _throwError(RecoverError error, bytes32 errorArg) private pure {
+    |                          ^^^^^^^^^^^^^^^^^^
+
+✔ 8412: both parties bind a new criteria digest; supersession, top-up and revision are atomic (1026.651042ms)
+✔ 8412: buyer alone cannot supersede or bypass the isolated application entry point (354.319625ms)
+✔ 8412: transfer failure rolls back an already attempted registry supersession and needs fresh consent (859.118625ms)
+✔ 8412: a final prior verdict blocks supersession and preserves the order and funding (524.704041ms)
+✔ 8412: an Indeterminate prior verdict allows a mutually accepted successor, not an old-record rewrite (428.540334ms)
+✔ 8412: successor evidence must use its own registration and a new capture time (O1 subset) (356.366333ms)
+✔ 8412: submission after consent prevents amendment and criteria supersession (556.1825ms)
+✔ 8412: payment callback cannot execute a second supersession (408.3835ms)
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+  --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:92:29:
+   |
+92 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, signature);
+   |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:119:29:
+    |
+119 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, r, vs);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:161:29:
+    |
+161 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, v, r, s);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:169:26:
+    |
+169 |     function _throwError(RecoverError error, bytes32 errorArg) private pure {
+    |                          ^^^^^^^^^^^^^^^^^^
+
+✔ Solidity hashes agree with published vector and deployed EIP-712 domain (585.63425ms)
+✔ 100 -> 180 -> 220 funds only 80 then 40 using current revision and deadline (585.768292ms)
+✔ buyer invalidates a Ready amendment without cancelling underlying order (451.177709ms)
+✔ provider invalidates a Ready amendment without cancelling underlying order (451.33375ms)
+✔ provider cannot use proposer-only Core cancellation; explicit order invalidation remains available (313.467917ms)
+✔ two Ready candidates on same base revision: only one can apply (628.26225ms)
+✔ funding failure rolls back order and token state; fresh signed intent can retry (743.483834ms)
+✔ token transfer followed by failure is reverted, including intermediate ERC-20 movement (417.750459ms)
+✔ insufficient balance cannot activate a larger revision (355.840416ms)
+✔ unsigned executionData and substituted payload are rejected without consuming Ready intent (392.197541ms)
+✔ submission binds revision and freezes a previously Ready amendment (444.0835ms)
+✔ expiry equality: intent is not executable at its deadline (359.747542ms)
+✔ expiry equality: acceptance is not executable at its deadline (360.261875ms)
+✔ expiry equality: amendment is not executable at its deadline (415.939834ms)
+✔ expiry equality: order is not executable at its deadline (449.063ms)
+✔ acceptance is required from both parties, initiator included; duplicates and nonparticipants fail (322.984334ms)
+✔ wrong domain, wrong signer, noncanonical parties and replayed proposal are rejected (176.917ms)
+✔ compact EIP-2098 initiator and acceptance signatures are accepted (295.881666ms)
+✔ ERC-1271 provider can accept and invalidate; invalid contract signature fails (662.687458ms)
+✔ token callback cannot reenter the same Ready amendment during funding (384.289375ms)
+✔ unrelated parties, wrong executor, noncanonical bytes and unsupported conditions cannot authorize an order (183.933458ms)
+✔ price decreases and deadline shortening do not release previously reserved funds (827.712209ms)
+✔ acceptances are intent-bound and the signature itself cannot authorize another intent (234.79975ms)
+✔ proposal and acceptance reject their expiry equality; expired intent cleanup is permissionless (327.785042ms)
+✔ fixed vector: ethers encoder and independent viem ABI/type declarations agree (36.963875ms)
+✔ signed amendment locks the supplement and keeps historical terms (35.962584ms)
+✔ neither a missing signature nor a stranger authorizes the supplement (12.632875ms)
+✔ signed terms cannot be substituted (8.783708ms)
+✔ insufficient funds leaves nonce, terms, history and balances untouched (10.627791ms)
+✔ expiry is exclusive at validUntil (9.797417ms)
+✔ expired base order cannot be resurrected by an amendment (9.165708ms)
+✔ chained amendments use the current deadline and price, and invalidate competing changes (14.688917ms)
+✔ chained amendments cannot revive an order at the current deadline (15.577ms)
+✔ failed funding of a second amendment preserves the already accepted revision (17.141917ms)
+✔ replay and competing amendments from the same revision cannot both apply (11.262292ms)
+✔ signatures are bound to the chain and verifying contract (10.819625ms)
+✔ another order cannot reuse signed amendments (7.811792ms)
+✔ either party can invalidate pending proposals without cancelling work (18.15675ms)
+✔ a stranger cannot invalidate a signed offer (8.832375ms)
+✔ submitted work freezes amendment eligibility and acceptance binds exact evidence (8.935625ms)
+✔ amended work settles once to its provider with conservation of mock balances (11.925625ms)
+✔ delivery cannot refer to the old scope after a change (10.596792ms)
+✔ amendment signatures do not serve as acceptance signatures (10.159792ms)
+✔ prototype restricts price decreases and deadline shortening (9.165584ms)
+✔ snapshots cannot mutate internal authority or balances (7.764791ms)
+✔ hashes and integers have an unambiguous encoding (7.488667ms)
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+  --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:92:29:
+   |
+92 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, signature);
+   |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:119:29:
+    |
+119 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, r, vs);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:161:29:
+    |
+161 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, v, r, s);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:169:26:
+    |
+169 |     function _throwError(RecoverError error, bytes32 errorArg) private pure {
+    |                          ^^^^^^^^^^^^^^^^^^
+
+✔ full order: 100 -> 180 -> current delivery -> buyer acceptance pays exactly once (969.5145ms)
+✔ only the buyer may accept; acceptance binds revision, terms and exact submitted result (500.074542ms)
+✔ buyer cannot pay an offered or active order before delivery (104.303ms)
+✔ buyer cancels an unactivated offer; refund is terminal and cannot reuse its ID (173.991209ms)
+✔ activation prevents a unilateral early cancellation (115.292333ms)
+✔ an expired unactivated offer can be refunded by anyone, only to the buyer (174.630333ms)
+✔ refund uses the amended deadline and returns all 180, including the supplement (531.712042ms)
+✔ on-time delivery prevents timeout refunds; buyer can accept after the delivery deadline (275.73475ms)
+✔ pending amendment cannot resurrect a accepted order (498.668125ms)
+✔ pending amendment cannot resurrect a refunded order (452.115417ms)
+✔ a failed payout rolls back acceptance, escrow and token movements; buyer can retry (413.356083ms)
+✔ cancel refund rolls back on token failure and permits retry (294.26575ms)
+✔ expire refund rolls back on token failure and permits retry (373.711959ms)
+✔ token callback cannot reenter a permissionless refund on a second order (260.451167ms)
+✔ payout preserves another order escrow, which can be separately refunded (612.887625ms)
+✔ unknown orders have no refundable balance and cannot be accepted or cancelled (57.235708ms)
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+  --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:92:29:
+   |
+92 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, signature);
+   |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:119:29:
+    |
+119 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, r, vs);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:161:29:
+    |
+161 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, v, r, s);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:169:26:
+    |
+169 |     function _throwError(RecoverError error, bytes32 errorArg) private pure {
+    |                          ^^^^^^^^^^^^^^^^^^
+
+✔ 8427: cap 1000 -> 800 retains usage 700 and atomically funds the 80 supplement (1600.3955ms)
+✔ 8427: successful preflight does not reserve funds against a cap cut after consent (618.301792ms)
+✔ 8427: restoring capacity needs a fresh intent and fresh acceptance from both parties (990.802667ms)
+✔ 8427: revocation after consent prevents the top-up and leaves the order intact (597.07625ms)
+✔ 8427: token movement followed by false rolls back the upstream debit and token logs (582.82975ms)
+✔ 8427: order balance check rolls back an already successful upstream spend on short delivery (580.120416ms)
+✔ 8427: two accepted orders share current grant usage rather than separate snapshots (886.922958ms)
+✔ 8427: knowing the grant ID cannot bypass the delegate or charge another buyer (278.446208ms)
+✔ 8427: token callback cannot fund the accepted amendment twice (404.043584ms)
+✔ 8427: revoking funding authority does not revoke a consented change with no extra payment (404.880667ms)
+ℹ tests 89
+ℹ suites 0
+ℹ pass 89
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17358.058833

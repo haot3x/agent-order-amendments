@@ -1,0 +1,40 @@
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+  --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:92:29:
+   |
+92 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, signature);
+   |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:119:29:
+    |
+119 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, r, vs);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:161:29:
+    |
+161 |         (address recovered, RecoverError error, bytes32 errorArg) = tryRecover(hash, v, r, s);
+    |                             ^^^^^^^^^^^^^^^^^^
+
+Warning: "error" will be promoted to keyword in the future and will not be allowed as an identifier anymore.
+   --> @openzeppelin/contracts/utils/cryptography/ECDSA.sol:169:26:
+    |
+169 |     function _throwError(RecoverError error, bytes32 errorArg) private pure {
+    |                          ^^^^^^^^^^^^^^^^^^
+
+✔ 8412: both parties bind a new criteria digest; supersession, top-up and revision are atomic (1149.381833ms)
+✔ 8412: buyer alone cannot supersede or bypass the isolated application entry point (417.83875ms)
+✔ 8412: transfer failure rolls back an already attempted registry supersession and needs fresh consent (975.258958ms)
+✔ 8412: a final prior verdict blocks supersession and preserves the order and funding (562.873583ms)
+✔ 8412: an Indeterminate prior verdict allows a mutually accepted successor, not an old-record rewrite (423.031458ms)
+✔ 8412: successor evidence must use its own registration and a new capture time (O1 subset) (373.955875ms)
+✔ 8412: submission after consent prevents amendment and criteria supersession (569.366291ms)
+✔ 8412: payment callback cannot execute a second supersession (434.616875ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12051.613125
