@@ -27,6 +27,7 @@ npm run test:evm       # Local Solidity/EVM integration cases
 npm run test:state     # Common read ABI and viem amendment workflow
 npm run test:spend-grants # ERC-8427 cap changes and atomic order funding
 npm run test:criteria  # ERC-8412 mutual consent and atomic criteria supersession
+npm run test:bursts    # Repeated revisions, competing candidates and fee delays
 npm run test:vectors   # ethers / viem encoding comparison
 npm run compile       # Optional ABI/bytecode output in ignored artifacts/
 npm run vectors       # Regenerate the committed deterministic vector
@@ -54,7 +55,9 @@ For `100 → 180 → 220`, supplements are 80 and 40. Price decreases, deadline 
 
 ## Evidence
 
-Local run on 2026-11-02: **89 tests passed**: 67 local EVM tests (including 10 ERC-8427 and 8 ERC-8412 integration cases), 1 cross-library fixed-vector test and 21 original JavaScript model tests. The full local EVM demo also passed, and regenerating the signed vector produced no changes.
+Local run on 2026-11-18: **95 tests passed**: 73 local EVM tests (including 10 ERC-8427, 8 ERC-8412 and 6 repeated-update/fee cases), 1 cross-library fixed-vector test and 21 original JavaScript model tests. The full local EVM demo also passed, and regenerating the signed vector produced no changes.
+
+The [repeated-update and fee experiment](BURSTS-AND-FEES.md) covers 32 consecutive revisions, eight competing candidates in one block, repeated failed top-ups, and execution delayed by a higher base fee. It measures receipt gas for all four amendment transactions and distinguishes original escrow from the supplement collected only at application. These bounded local cases are not a public-network throughput or inclusion guarantee.
 
 EVM cases include competing amendments, buyer/provider invalidation, insufficient balance and allowance, a token that moves funds then reports failure, a reentrant token callback, substituted payloads, expiry equality, compact signatures, and a mock ERC-1271 wallet. Solidity, ethers and independently declared viem encodings agree on the published vector.
 
@@ -83,6 +86,7 @@ The [discovery and tender composition notes](PROFILE.md#discovery-and-tender-com
 | [test/amendment-state-evm.test.mjs](test/amendment-state-evm.test.mjs) | State view semantics and client-to-contract workflow |
 | [DEMO.md](DEMO.md) | Local demo walkthrough and application settlement policy |
 | [ERC8427.md](ERC8427.md) | Registered-grant funding integration and reproducible results |
+| [BURSTS-AND-FEES.md](BURSTS-AND-FEES.md) | Repeated-update tests, fee-delay behavior and transaction gas measurements |
 | [contracts/ExperimentalOrderAmendments.sol](contracts/ExperimentalOrderAmendments.sol) | Combined coordination/order execution experiment |
 | [contracts/test/Fixtures.sol](contracts/test/Fixtures.sol) | Disposable token and contract-wallet fixtures |
 | [src/profile.mjs](src/profile.mjs) | ethers encoding helpers |
