@@ -1,0 +1,5 @@
+
+> agent-order-amendments-prototype@0.1.0 vectors
+> node scripts/generate-vectors.mjs
+
+Wrote deterministic ORDER_AMENDMENT_V1 vector
