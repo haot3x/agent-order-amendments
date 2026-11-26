@@ -1,6 +1,6 @@
 # ORDER_AMENDMENT_V1 — experimental profile 0.1
 
-Status: implementation experiment for the assigned ERC-8448 proposal over ERC-8001. The [official Draft submission](https://github.com/ethereum/ERCs/pull/2082) awaits editor approval and merge; assignment is not standards approval. Breaking revisions must use a new profile identifier. This document describes this repository's behavior, not additions already accepted into ERC-8001.
+Status: implementation experiment for [ERC-8448](https://github.com/ethereum/ERCs/blob/master/ERCS/erc-8448.md) over ERC-8001. The official proposal was merged as Draft on 25 November 2026 ([PR #2082](https://github.com/ethereum/ERCs/pull/2082)); it is not Final. Breaking revisions must use a new profile identifier. This document describes this repository's behavior, not additions already accepted into ERC-8001.
 
 ## Scope
 

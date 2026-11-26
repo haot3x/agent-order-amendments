@@ -4,7 +4,7 @@ Author: Ted (@haot3x)
 
 Run a local order amendment from a common state read through both signatures, supplemental funding and revision activation. Then run the delivery and payment demo. Allow roughly five minutes with Git and Node.js 24 already installed; the first dependency download can take longer.
 
-This is a reproduction of the project's experimental implementation. ERC-8448's [Draft submission](https://github.com/ethereum/ERCs/pull/2082) is awaiting editor approval and merge. A successful run is useful external reproduction evidence, but does not establish a second implementation, an audit or standards approval.
+This is a reproduction of the project's experimental implementation. [ERC-8448](https://github.com/ethereum/ERCs/blob/master/ERCS/erc-8448.md) was merged as Draft on 25 November 2026 ([PR #2082](https://github.com/ethereum/ERCs/pull/2082)). A successful run is useful external reproduction evidence, but does not establish a second implementation, an audit or Final status.
 
 ## 1. Get the tested implementation
 
