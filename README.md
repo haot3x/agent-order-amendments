@@ -69,6 +69,8 @@ The [ERC-8412 experiment](ERC8412.md) tests mutually authorized criteria superse
 
 The [ERC-8505 experiment](ERC8505.md) reads amended orders as evaluated work records. It adds 16 cases over the pinned, unmodified ERC-8505 reference reader: an optional `supplemented` step for price and terms changes, six task vectors and five cases a reader must fail. The step is a proposal under discussion in the ERC-8505 thread, not part of that draft.
 
+A [second implementation](second-implementation/README.md) written only from the published specification and vector has 176 Foundry tests. One spec-level client drives it and this implementation through 22 scenarios, including the published vector's signatures on a live local chain; [the two agree](second-implementation/INTEROP.md) on every observation except the bytes of `result` when an application fails. Both were commissioned by the specification's author and the second was written by an AI coding agent, so this is a reproducible starting point for an outside implementation rather than a substitute for one.
+
 The [common-view workflow](STATE-VIEW.md) adds nine EVM cases. A viem client declares its ABI and encodings separately, reads the base state, signs, applies an amendment and verifies the new revision. Cases cover unknown IDs, ineligible states, deadline equality, nonce invalidation, funding failure and a second read-only storage-layout fixture. That fixture is not a second complete ERC-8448 implementation.
 
 External reproduction reported on 2026-10-27: [Revinand ran the quickstart](https://ethereum-magicians.org/t/erc-8448-agent-service-order-amendments/29936/10) at commit `6d58faba27a32e802f11c4919cfd9682489976ba` on Ubuntu 24.04.5 LTS x86_64, Node.js 24.8.0 and npm 11.6.0. Installation succeeded, all 9 state-view cases and all 81 full-suite tests passed, and the lifecycle demo passed. The report confirms revision/nonce advancement, the supplemental transfer, failed-funding state preservation, final balances and both refunds.
@@ -90,6 +92,7 @@ The [discovery and tender composition notes](PROFILE.md#discovery-and-tender-com
 | [ERC8427.md](ERC8427.md) | Registered-grant funding integration and reproducible results |
 | [BURSTS-AND-FEES.md](BURSTS-AND-FEES.md) | Repeated-update tests, fee-delay behavior and transaction gas measurements |
 | [ERC8505.md](ERC8505.md) | Reading amended orders as ERC-8505 work records with an optional `supplemented` step |
+| [second-implementation/](second-implementation/README.md) | A second implementation written only from the published text, cross-implementation tests and spec notes |
 | [contracts/ExperimentalOrderAmendments.sol](contracts/ExperimentalOrderAmendments.sol) | Combined coordination/order execution experiment |
 | [contracts/test/Fixtures.sol](contracts/test/Fixtures.sol) | Disposable token and contract-wallet fixtures |
 | [src/profile.mjs](src/profile.mjs) | ethers encoding helpers |

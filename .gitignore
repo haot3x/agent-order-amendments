@@ -17,3 +17,9 @@ forum-post.md
 status-*.md
 *-reply.md
 *-reply-draft.md
+
+# Second implementation build output and test library
+second-implementation/impl/out/
+second-implementation/impl/cache/
+second-implementation/impl/lib/
+second-implementation/interop/observations.json
