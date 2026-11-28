@@ -55,7 +55,7 @@ For `100 → 180 → 220`, supplements are 80 and 40. Price decreases, deadline 
 
 ## Evidence
 
-Local run on 2026-11-18: **95 tests passed**: 73 local EVM tests (including 10 ERC-8427, 8 ERC-8412 and 6 repeated-update/fee cases), 1 cross-library fixed-vector test and 21 original JavaScript model tests. The full local EVM demo also passed, and regenerating the signed vector produced no changes.
+Local run on 2026-11-18: **95 tests passed**: 73 local EVM tests (including 10 ERC-8427, 8 ERC-8412 and 6 repeated-update/fee cases), 1 cross-library fixed-vector test and 21 original JavaScript model tests. The full local EVM demo also passed, and regenerating the signed vector produced no changes. Local run on 2026-11-28: **111 tests passed**, the 95 above plus 16 ERC-8505 work-record cases; the added hooks are empty in the base contract and its measured gas is unchanged.
 
 The [repeated-update and fee experiment](BURSTS-AND-FEES.md) covers 32 consecutive revisions, eight competing candidates in one block, repeated failed top-ups, and execution delayed by a higher base fee. It measures receipt gas for all four amendment transactions and distinguishes original escrow from the supplement collected only at application. These bounded local cases are not a public-network throughput or inclusion guarantee.
 
@@ -66,6 +66,8 @@ Settlement cases cover single payment, exact delivery binding, unauthorized acce
 The [ERC-8427 integration experiment](ERC8427.md) adds 10 local EVM cases against the pinned, unmodified upstream registered-grant registry and direct executor. They cover cap reduction after consent, revocation, atomic debit/transfer/revision rollback, fresh-consent retry and competing orders sharing one grant. The upstream contracts use solc 0.8.28; our fixture uses 0.8.37.
 
 The [ERC-8412 experiment](ERC8412.md) tests mutually authorized criteria supersession, atomic rollback on funding failure, final-verdict restrictions and an explicit no-carry-forward evidence policy. It uses the real pinned registry, not a full off-chain verifier.
+
+The [ERC-8505 experiment](ERC8505.md) reads amended orders as evaluated work records. It adds 16 cases over the pinned, unmodified ERC-8505 reference reader: an optional `supplemented` step for price and terms changes, six task vectors and five cases a reader must fail. The step is a proposal under discussion in the ERC-8505 thread, not part of that draft.
 
 The [common-view workflow](STATE-VIEW.md) adds nine EVM cases. A viem client declares its ABI and encodings separately, reads the base state, signs, applies an amendment and verifies the new revision. Cases cover unknown IDs, ineligible states, deadline equality, nonce invalidation, funding failure and a second read-only storage-layout fixture. That fixture is not a second complete ERC-8448 implementation.
 
@@ -87,6 +89,7 @@ The [discovery and tender composition notes](PROFILE.md#discovery-and-tender-com
 | [DEMO.md](DEMO.md) | Local demo walkthrough and application settlement policy |
 | [ERC8427.md](ERC8427.md) | Registered-grant funding integration and reproducible results |
 | [BURSTS-AND-FEES.md](BURSTS-AND-FEES.md) | Repeated-update tests, fee-delay behavior and transaction gas measurements |
+| [ERC8505.md](ERC8505.md) | Reading amended orders as ERC-8505 work records with an optional `supplemented` step |
 | [contracts/ExperimentalOrderAmendments.sol](contracts/ExperimentalOrderAmendments.sol) | Combined coordination/order execution experiment |
 | [contracts/test/Fixtures.sol](contracts/test/Fixtures.sol) | Disposable token and contract-wallet fixtures |
 | [src/profile.mjs](src/profile.mjs) | ethers encoding helpers |

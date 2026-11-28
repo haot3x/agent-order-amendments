@@ -141,12 +141,14 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         o.buyer = msg.sender; o.provider = provider; o.status = OrderStatus.Offered;
         o.terms = terms; o.termsHash = hashTerms(terms); o.escrow = terms.totalPrice;
         emit OrderOffered(id, msg.sender, provider, o.termsHash);
+        _afterOffered(id, o);
     }
     function activateOrder(bytes32 id) external nonReentrant {
         Order storage o = orders[id];
         require(o.status == OrderStatus.Offered && msg.sender == o.provider, "ACTIVATION");
         require(block.timestamp < o.terms.deadline, "ORDER_DEADLINE");
         o.status = OrderStatus.Active; emit OrderActivated(id);
+        _afterActivated(id, o);
     }
     function getOrder(bytes32 id) external view returns (Order memory) { return orders[id]; }
     /// @notice Common ERC-8448 read surface; eligibility does not reserve funding.
@@ -181,6 +183,7 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         require(revision == o.revision && termsHash == o.termsHash && resultHash != 0, "SUBMISSION_BINDING");
         o.status = OrderStatus.Submitted; o.resultHash = resultHash;
         emit OrderSubmitted(id, revision, termsHash, resultHash);
+        _afterSubmitted(id, o);
     }
     /// @dev Application fixture, not part of the amendment wire format. The buyer
     /// reviews the actual deliverable off-chain; a hash does not prove quality.
@@ -193,6 +196,7 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         emit OrderAccepted(id, msg.sender, revision, termsHash, resultHash);
         uint256 amount = _release(o, o.provider);
         emit OrderPaid(id, o.provider, amount);
+        _afterPaid(id, o, amount);
     }
     /// @dev A provider has not committed to an Offered order yet. Once activated,
     /// there is no unilateral early cancellation in this minimal fixture.
@@ -203,6 +207,7 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         o.status = OrderStatus.Cancelled;
         uint256 amount = _release(o, o.buyer);
         emit OrderRefunded(id, o.buyer, amount, OrderStatus.Cancelled);
+        _afterRefunded(id, o, amount);
     }
     /// @dev Anyone can trigger a refund, but only to the recorded buyer. Work
     /// submitted on time must be reviewed; expiry cannot override that delivery.
@@ -213,6 +218,7 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         o.status = OrderStatus.Refunded;
         uint256 amount = _release(o, o.buyer);
         emit OrderRefunded(id, o.buyer, amount, OrderStatus.Refunded);
+        _afterRefunded(id, o, amount);
     }
     function _data(CoordinationPayload calldata p) private view returns (AmendmentData memory d) {
         require(p.version == PAYLOAD_VERSION && p.coordinationType == COORDINATION_TYPE, "PROFILE");
@@ -291,11 +297,23 @@ contract ExperimentalOrderAmendments is EIP712, ReentrancyGuard {
         o.terms = d.newTerms; o.termsHash = d.newTermsHash; o.escrow += delta;
         ++o.revision; ++o.amendmentNonce;
         emit OrderAmendmentApplied(h, d.orderId, o.revision, d.baseTermsHash, d.newTermsHash, delta);
+        _afterAmended(d.orderId, o, delta);
         return abi.encode(d.orderId, o.revision, d.newTermsHash, delta);
     }
     /// @dev Optional integration hook inside the isolated application transaction.
     /// Authorization and stale-state checks precede it; funding failure reverts it.
     function _beforeAmendment(AmendmentData memory d, Order storage current) internal virtual {}
+
+    /// @dev Optional evidence hooks for integration fixtures, called after the
+    /// state change and its event. They are no-ops here and are not part of the
+    /// amendment wire format. `_afterAmended` runs inside the isolated
+    /// application call, so a failed application rolls back whatever it emits.
+    function _afterOffered(bytes32 id, Order storage o) internal virtual {}
+    function _afterActivated(bytes32 id, Order storage o) internal virtual {}
+    function _afterAmended(bytes32 id, Order storage o, uint256 supplement) internal virtual {}
+    function _afterSubmitted(bytes32 id, Order storage o) internal virtual {}
+    function _afterPaid(bytes32 id, Order storage o, uint256 amount) internal virtual {}
+    function _afterRefunded(bytes32 id, Order storage o, uint256 amount) internal virtual {}
 
     function cancelCoordination(bytes32 h, string calldata reason) external nonReentrant {
         Coordination storage c = coordinations[h];
