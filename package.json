@@ -16,7 +16,8 @@
     "test:spend-grants": "node --test test/spend-grants-evm.test.mjs",
     "test:vectors": "node --test test/profile-vectors.test.mjs",
     "compile": "node scripts/compile.mjs",
-    "vectors": "node scripts/generate-vectors.mjs",
+    "vectors": "node scripts/generate-vectors.mjs && node scripts/generate-work-record-vectors.mjs",
+    "test:work-records": "node --test test/work-records-supplemented.test.mjs",
     "test:state": "node --test test/amendment-state-evm.test.mjs",
     "test:criteria": "node --test test/criteria-supersession-evm.test.mjs"
   },
