@@ -5,7 +5,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -17,3 +17,12 @@ jobs:
       - run: npm run vectors
       - run: git diff --exit-code -- vectors/
       - run: npm run demo
+      - uses: foundry-rs/foundry-toolchain@dba66c27052e63476d886f22216e119ba7e615bf # v1
+        with:
+          version: v1.7.1
+      - run: git clone --depth 1 --branch v1.17.0 https://github.com/foundry-rs/forge-std second-implementation/impl/lib/forge-std
+      - run: forge build
+        working-directory: second-implementation/impl
+      - run: forge test
+        working-directory: second-implementation/impl
+      - run: npm run test:interop
